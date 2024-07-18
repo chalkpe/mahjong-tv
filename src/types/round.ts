@@ -3,6 +3,7 @@ import { Mode } from './mode'
 import { Wind } from './wind'
 
 export interface Round {
+  time: number
   mode: Mode
   ba: Wind
   kyoku: number

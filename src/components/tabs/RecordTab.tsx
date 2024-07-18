@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo, useState } from 'react'
-import { Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import settingsAtom from '../../store/settings'
 import roundsAtom, { lastRoundAtom } from '../../store/rounds'
 
@@ -12,20 +12,28 @@ import { Wind } from '../../types/wind'
 
 const RecordTab: FC = () => {
   const { mode, names } = useAtomValue(settingsAtom)
-  const winds = windsForMode[mode]
+  const winds = useMemo(() => windsForMode[mode], [mode])
 
-  const setRounds = useSetAtom(roundsAtom)
+  const [rounds, setRounds] = useAtom(roundsAtom)
   const lastRound = useAtomValue(lastRoundAtom)
 
-  const [ba, setBa] = useState<Wind>('east')
-  const [kyoku, setKyoku] = useState<number>(1)
-  const [honba, setHonba] = useState<number>(0)
+  const [ba, setBa] = useState<Wind>(lastRound?.ba ?? 'east')
+  const [kyoku, setKyoku] = useState<number>(lastRound?.kyoku ?? 1)
+  const [honba, setHonba] = useState<number>(lastRound?.honba ?? 0)
   const [scores, setScores] = useState<Partial<Record<Wind, number>>>(lastRound ? lastRound.scores : scoresForMode[mode])
   const [type, setType] = useState<AgariType>('tsumo')
   const [agari, setAgari] = useState<Wind[]>([])
   const [houjuu, setHoujuu] = useState<Wind>()
 
-  const isValid = useMemo(() => {
+  const isBaKyuokuHonbaValid = useMemo(
+    () => ({
+      valid: kyoku >= 1 && honba >= 0,
+      duplicate: !rounds.some((r) => r.ba === ba && r.kyoku === kyoku && r.honba === honba),
+    }),
+    [ba, honba, kyoku, rounds]
+  )
+
+  const isSelectValid = useMemo(() => {
     switch (type) {
       case 'tsumo':
         return agari.length === 1
@@ -38,9 +46,26 @@ const RecordTab: FC = () => {
     }
   }, [agari.length, houjuu, type])
 
+  const isValid = useMemo(() => isBaKyuokuHonbaValid.valid && isSelectValid, [isBaKyuokuHonbaValid.valid, isSelectValid])
+
+  const scoreChanges = useMemo(
+    () =>
+      lastRound
+        ? winds.flatMap((wind) => {
+            if (scores[wind] && lastRound.scores[wind]) {
+              const diff = scores[wind] - lastRound.scores[wind]
+              return diff !== 0 ? [`${names[wind]} ${diff > 0 ? '+' : ''}${diff}점`] : []
+            }
+            return []
+          })
+        : [],
+    [lastRound, names, scores, winds]
+  )
+
   const record = useCallback(() => {
     // create round
-    setRounds((rounds) => [...rounds, { mode, ba, kyoku, honba, scores, type, agari, houjuu }])
+    const time = Date.now()
+    setRounds((rounds) => [...rounds, { time, mode, ba, kyoku, honba, scores, type, agari, houjuu }])
 
     // reset
     setType('tsumo')
@@ -54,7 +79,15 @@ const RecordTab: FC = () => {
           회차
         </Typography>
         <Stack direction="row" spacing={1}>
-          <Select fullWidth value={ba} onChange={(event) => setBa(event.target.value as Wind)}>
+          <Select
+            fullWidth
+            value={ba}
+            onChange={(event) => {
+              setBa(event.target.value as Wind)
+              setKyoku(1)
+              setHonba(0)
+            }}
+          >
             {winds.map((wind) => (
               <MenuItem key={wind} value={wind}>
                 {baNames[wind]}
@@ -66,7 +99,10 @@ const RecordTab: FC = () => {
             label="국"
             fullWidth
             value={kyoku.toString()}
-            onChange={(event) => setKyoku(Number(event.target.value))}
+            onChange={(event) => {
+              setKyoku(Number(event.target.value))
+              setHonba(0)
+            }}
           />
           <TextField
             type="number"
@@ -160,6 +196,23 @@ const RecordTab: FC = () => {
       )}
 
       <Divider />
+
+      {scoreChanges.length > 0 && (
+        <Box>
+          <Typography variant="body1" fontWeight="700">
+            점수 등락
+          </Typography>
+          <Typography variant="body1">{scoreChanges.join(', ')}</Typography>
+        </Box>
+      )}
+
+      {isSelectValid && !isBaKyuokuHonbaValid.valid && <Alert severity="error">회차가 올바르지 않습니다.</Alert>}
+      {isSelectValid && !isBaKyuokuHonbaValid.duplicate && (
+        <Alert severity="error">
+          {baNames[ba]}
+          {kyoku}국 {honba}본장은 이미 기록되어 있습니다.
+        </Alert>
+      )}
 
       <ButtonGroup size="large" fullWidth>
         <Button variant="contained" color="primary" disabled={!isValid} onClick={record}>
