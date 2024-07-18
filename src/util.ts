@@ -1,4 +1,5 @@
 import type { Mode } from './types/mode'
+import type { Round } from './types/round'
 import type { Wind } from './types/wind'
 
 export const baNames: Record<Wind, string> = {
@@ -26,3 +27,12 @@ export const scoresForMode: Record<Mode, Partial<Record<Wind, number>>> = {
   3: { east: 35000, south: 35000, west: 35000 },
   2: { east: 0, west: 0 },
 }
+
+export const calculateChanges = (winds: Wind[], names: Record<Wind, string>, scores: Partial<Record<Wind, number>>, round: Round) =>
+  winds.flatMap((wind) => {
+    if (scores[wind] && round.scores[wind]) {
+      const diff = scores[wind] - round.scores[wind]
+      return diff !== 0 ? [`${names[wind]} ${diff > 0 ? '+' : ''}${diff}점`] : []
+    }
+    return []
+  })

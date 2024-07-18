@@ -1,11 +1,11 @@
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 
 import { useAtom, useAtomValue } from 'jotai'
 import settingsAtom from '../../store/settings'
-import roundsAtom, { lastRoundAtom } from '../../store/rounds'
+import roundsAtom, { lastRoundAtom, selectedRoundIndexAtom } from '../../store/rounds'
 
-import { scoresForMode, baNames, windsForMode } from '../../util'
+import { scoresForMode, baNames, windsForMode, calculateChanges } from '../../util'
 
 import { AgariType, agariTypeOptions } from '../../types/agari'
 import { Wind } from '../../types/wind'
@@ -15,15 +15,46 @@ const RecordTab: FC = () => {
   const winds = useMemo(() => windsForMode[mode], [mode])
 
   const [rounds, setRounds] = useAtom(roundsAtom)
+  const [selectedRoundIndex, setSelectedRoundIndex] = useAtom(selectedRoundIndexAtom)
+  const color = useMemo(() => (selectedRoundIndex !== undefined ? 'secondary' : 'primary'), [selectedRoundIndex])
+
   const lastRound = useAtomValue(lastRoundAtom)
+  const selectedRound = useMemo(
+    () => (selectedRoundIndex !== undefined ? rounds[selectedRoundIndex] : undefined),
+    [rounds, selectedRoundIndex]
+  )
+  const preSelectedRound = useMemo(
+    () => (selectedRoundIndex !== undefined && selectedRoundIndex > 0 ? rounds[selectedRoundIndex - 1] : undefined),
+    [rounds, selectedRoundIndex]
+  )
 
   const [ba, setBa] = useState<Wind>(lastRound?.ba ?? 'east')
   const [kyoku, setKyoku] = useState<number>(lastRound?.kyoku ?? 1)
   const [honba, setHonba] = useState<number>(lastRound?.honba ?? 0)
-  const [scores, setScores] = useState<Partial<Record<Wind, number>>>(lastRound ? lastRound.scores : scoresForMode[mode])
+  const [scores, setScores] = useState<Partial<Record<Wind, number>>>(lastRound?.scores ?? scoresForMode[mode])
   const [type, setType] = useState<AgariType>('tsumo')
   const [agari, setAgari] = useState<Wind[]>([])
   const [houjuu, setHoujuu] = useState<Wind>()
+
+  useEffect(() => {
+    if (selectedRound) {
+      setBa(selectedRound.ba)
+      setKyoku(selectedRound.kyoku)
+      setHonba(selectedRound.honba)
+      setScores(selectedRound.scores)
+      setType(selectedRound.type)
+      setAgari(selectedRound.agari)
+      setHoujuu(selectedRound.houjuu)
+    } else {
+      setBa(lastRound?.ba ?? 'east')
+      setKyoku(lastRound?.kyoku ?? 1)
+      setHonba(lastRound?.honba ?? 0)
+      setScores(lastRound?.scores ?? scoresForMode[mode])
+      setType('tsumo')
+      setAgari([])
+      setHoujuu(undefined)
+    }
+  }, [lastRound, mode, selectedRound])
 
   const isBaKyuokuHonbaValid = useMemo(
     () => ({
@@ -50,16 +81,14 @@ const RecordTab: FC = () => {
 
   const scoreChanges = useMemo(
     () =>
-      lastRound
-        ? winds.flatMap((wind) => {
-            if (scores[wind] && lastRound.scores[wind]) {
-              const diff = scores[wind] - lastRound.scores[wind]
-              return diff !== 0 ? [`${names[wind]} ${diff > 0 ? '+' : ''}${diff}점`] : []
-            }
-            return []
-          })
+      selectedRoundIndex !== undefined
+        ? preSelectedRound
+          ? calculateChanges(winds, names, scores, preSelectedRound)
+          : []
+        : lastRound
+        ? calculateChanges(winds, names, scores, lastRound)
         : [],
-    [lastRound, names, scores, winds]
+    [lastRound, names, preSelectedRound, scores, selectedRoundIndex, winds]
   )
 
   const record = useCallback(() => {
@@ -72,6 +101,32 @@ const RecordTab: FC = () => {
     setAgari([])
   }, [agari, ba, honba, houjuu, kyoku, mode, scores, setRounds, type])
 
+  const edit = useCallback(() => {
+    if (selectedRoundIndex !== undefined) {
+      // edit round
+      setRounds((rounds) =>
+        rounds.map((r, index) => (index === selectedRoundIndex ? { time: r.time, mode, ba, kyoku, honba, scores, type, agari, houjuu } : r))
+      )
+
+      // reset
+      setSelectedRoundIndex(undefined)
+      setType('tsumo')
+      setAgari([])
+    }
+  }, [agari, ba, honba, houjuu, kyoku, mode, scores, selectedRoundIndex, setRounds, setSelectedRoundIndex, type])
+
+  const deleteRound = useCallback(() => {
+    if (selectedRoundIndex !== undefined) {
+      // delete round
+      setRounds((rounds) => rounds.filter((_, index) => index !== selectedRoundIndex))
+
+      // reset
+      setSelectedRoundIndex(undefined)
+      setType('tsumo')
+      setAgari([])
+    }
+  }, [selectedRoundIndex, setRounds, setSelectedRoundIndex])
+
   return (
     <Stack direction="column" spacing={2}>
       <section>
@@ -80,6 +135,7 @@ const RecordTab: FC = () => {
         </Typography>
         <Stack direction="row" spacing={1}>
           <Select
+            color={color}
             fullWidth
             value={ba}
             onChange={(event) => {
@@ -95,6 +151,7 @@ const RecordTab: FC = () => {
             ))}
           </Select>
           <TextField
+            color={color}
             type="number"
             label="국"
             fullWidth
@@ -105,6 +162,7 @@ const RecordTab: FC = () => {
             }}
           />
           <TextField
+            color={color}
             type="number"
             label="본장"
             fullWidth
@@ -122,6 +180,7 @@ const RecordTab: FC = () => {
           {winds.map((wind) => (
             <TextField
               key={wind}
+              color={color}
               type="number"
               margin="normal"
               label={names[wind]}
@@ -137,7 +196,7 @@ const RecordTab: FC = () => {
         <Typography variant="h6" gutterBottom>
           결과
         </Typography>
-        <ButtonGroup size="large" fullWidth>
+        <ButtonGroup size="large" fullWidth color={color}>
           {agariTypeOptions.map((agariType) => (
             <Button
               key={agariType.value}
@@ -157,7 +216,7 @@ const RecordTab: FC = () => {
         <Typography variant="h6" gutterBottom>
           {type === 'tsumo' || type === 'ron' ? '화료' : '텐파이'}
         </Typography>
-        <ButtonGroup size="large" fullWidth>
+        <ButtonGroup size="large" fullWidth color={color}>
           {winds.map((wind) => (
             <Button
               key={wind}
@@ -183,7 +242,7 @@ const RecordTab: FC = () => {
           <Typography variant="h6" gutterBottom>
             방총
           </Typography>
-          <ButtonGroup size="large" fullWidth>
+          <ButtonGroup size="large" fullWidth color={color}>
             {winds
               .filter((wind) => !agari.includes(wind))
               .map((wind) => (
@@ -207,18 +266,29 @@ const RecordTab: FC = () => {
       )}
 
       {isSelectValid && !isBaKyuokuHonbaValid.valid && <Alert severity="error">회차가 올바르지 않습니다.</Alert>}
-      {isSelectValid && !isBaKyuokuHonbaValid.duplicate && (
+      {selectedRoundIndex === undefined && isSelectValid && !isBaKyuokuHonbaValid.duplicate && (
         <Alert severity="error">
           {baNames[ba]}
           {kyoku}국 {honba}본장은 이미 기록되어 있습니다.
         </Alert>
       )}
 
-      <ButtonGroup size="large" fullWidth>
-        <Button variant="contained" color="primary" disabled={!isValid} onClick={record}>
-          생성
+      <Button
+        size="large"
+        fullWidth
+        color={color}
+        variant="contained"
+        disabled={!isValid}
+        onClick={selectedRoundIndex !== undefined ? edit : record}
+      >
+        {selectedRoundIndex !== undefined ? '수정' : '생성'}
+      </Button>
+
+      {selectedRoundIndex !== undefined && (
+        <Button size="large" fullWidth color="error" variant="contained" onClick={deleteRound}>
+          삭제
         </Button>
-      </ButtonGroup>
+      )}
     </Stack>
   )
 }
