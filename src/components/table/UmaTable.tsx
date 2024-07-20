@@ -1,13 +1,10 @@
 import { FC } from 'react'
 import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material'
-
-import BaseCell from './BaseCell'
-
 import { useAtomValue } from 'jotai'
-import settingsAtom from '../../store/settings'
-
-import { windsForMode } from '../../util'
 import useUma from '../../hooks/useUma'
+import settingsAtom from '../../store/settings'
+import { windsForMode } from '../../util'
+import BaseCell from './BaseCell'
 
 const UmaTable: FC = () => {
   const uma = useUma()

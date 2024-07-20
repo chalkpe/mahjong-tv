@@ -1,11 +1,9 @@
 import { FC } from 'react'
 import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material'
-
 import { useAtomValue } from 'jotai'
-import roundsAtom, { selectedRoundIndexAtom } from '../../store/rounds'
-
-import BaseCell from './BaseCell'
 import useCells from '../../hooks/useCells'
+import roundsAtom, { selectedRoundIndexAtom } from '../../store/rounds'
+import BaseCell from './BaseCell'
 
 const MainTable: FC = () => {
   const cells = useCells()

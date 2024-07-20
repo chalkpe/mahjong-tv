@@ -1,9 +1,8 @@
 import { FC } from 'react'
-import BaseCell from '../BaseCell'
-
 import { useAtomValue } from 'jotai'
 import settingsAtom from '../../../store/settings'
 import { windsForMode } from '../../../util'
+import BaseCell from '../BaseCell'
 import type { BaseCellProps } from '../../../types/cell'
 
 const ScoreCell: FC<BaseCellProps> = ({ round, isLast }) => {
@@ -11,7 +10,9 @@ const ScoreCell: FC<BaseCellProps> = ({ round, isLast }) => {
   return (
     <>
       {windsForMode[mode].map((wind) => (
-        <BaseCell key={wind} isLast={isLast}>{round.scores[wind]}</BaseCell>
+        <BaseCell key={wind} isLast={isLast}>
+          {round.scores[wind]}
+        </BaseCell>
       ))}
     </>
   )

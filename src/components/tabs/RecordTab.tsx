@@ -1,14 +1,11 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
-
 import { useAtom, useAtomValue } from 'jotai'
-import settingsAtom from '../../store/settings'
 import roundsAtom, { lastRoundAtom, selectedRoundIndexAtom } from '../../store/rounds'
-
-import { scoresForMode, baNames, windsForMode, calculateChanges } from '../../util'
-
+import settingsAtom from '../../store/settings'
 import { AgariType, agariTypeOptions } from '../../types/agari'
 import { Wind } from '../../types/wind'
+import { scoresForMode, baNames, windsForMode, calculateChanges } from '../../util'
 
 const RecordTab: FC = () => {
   const { mode, names } = useAtomValue(settingsAtom)
@@ -77,7 +74,10 @@ const RecordTab: FC = () => {
     }
   }, [agari.length, houjuu, type])
 
-  const isValid = useMemo(() => isBaKyuokuHonbaValid.valid && isSelectValid, [isBaKyuokuHonbaValid.valid, isSelectValid])
+  const isValid = useMemo(
+    () => isBaKyuokuHonbaValid.valid && isSelectValid,
+    [isBaKyuokuHonbaValid.valid, isSelectValid]
+  )
 
   const scoreChanges = useMemo(
     () =>
@@ -105,7 +105,9 @@ const RecordTab: FC = () => {
     if (selectedRoundIndex !== undefined) {
       // edit round
       setRounds((rounds) =>
-        rounds.map((r, index) => (index === selectedRoundIndex ? { time: r.time, mode, ba, kyoku, honba, scores, type, agari, houjuu } : r))
+        rounds.map((r, index) =>
+          index === selectedRoundIndex ? { time: r.time, mode, ba, kyoku, honba, scores, type, agari, houjuu } : r
+        )
       )
 
       // reset

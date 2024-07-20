@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import BaseCell from '../BaseCell'
 import { baNames } from '../../../util'
+import BaseCell from '../BaseCell'
 import type { BaseCellProps } from '../../../types/cell'
 
 const HonbaCell: FC<BaseCellProps> = ({ round, isLast }) => {

@@ -1,15 +1,13 @@
+
 import { FC, useMemo } from 'react'
-
-import TimeCell from '../components/table/cells/TimeCell'
-import HonbaCell from '../components/table/cells/HonbaCell'
-import ScoreCell from '../components/table/cells/ScoreCell'
-import ResultCell from '../components/table/cells/ResultCell'
-import HoujuuCell from '../components/table/cells/HoujuuCell'
-import SelectCell from '../components/table/cells/SelectCell'
-
 import { useAtomValue } from 'jotai'
+import HonbaCell from '../components/table/cells/HonbaCell'
+import HoujuuCell from '../components/table/cells/HoujuuCell'
+import ResultCell from '../components/table/cells/ResultCell'
+import ScoreCell from '../components/table/cells/ScoreCell'
+import SelectCell from '../components/table/cells/SelectCell'
+import TimeCell from '../components/table/cells/TimeCell'
 import settingsAtom from '../store/settings'
-
 import { windsForMode } from '../util'
 import type { BaseCellProps } from '../types/cell'
 

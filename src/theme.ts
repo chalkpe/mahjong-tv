@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material/styles'
 import { red } from '@mui/material/colors'
+import { createTheme } from '@mui/material/styles'
 
 import '@fontsource/noto-sans-kr/300.css'
 import '@fontsource/noto-sans-kr/400.css'

@@ -1,17 +1,18 @@
 import { FC, useMemo, useState } from 'react'
-import { Paper, Tab } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
-
+import { Paper, Tab } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { selectedRoundIndexAtom } from '../../store/rounds'
-
-import SettingsTab from './SettingsTab'
 import RecordTab from './RecordTab'
+import SettingsTab from './SettingsTab'
 
 const Tabs: FC = () => {
   const [tab, setTab] = useState('settings')
   const selectedRoundIndex = useAtomValue(selectedRoundIndexAtom)
-  const color = useMemo(() => selectedRoundIndex !== undefined  && tab === 'record' ? 'secondary' : 'primary', [selectedRoundIndex, tab])
+  const color = useMemo(
+    () => (selectedRoundIndex !== undefined && tab === 'record' ? 'secondary' : 'primary'),
+    [selectedRoundIndex, tab]
+  )
 
   return (
     <Paper sx={{ height: '100%' }}>

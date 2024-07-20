@@ -1,10 +1,9 @@
 import { useAtomValue } from 'jotai'
-import settingsAtom from '../store/settings'
 import { lastRoundAtom } from '../store/rounds'
-
+import settingsAtom from '../store/settings'
 import { scoresForMode, umaForMode, umaWindPriority } from '../util'
-
 import type { Wind } from '../types/wind'
+
 
 const useUma = () => {
   const { mode } = useAtomValue(settingsAtom)
