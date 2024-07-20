@@ -28,6 +28,14 @@ export const scoresForMode: Record<Mode, Partial<Record<Wind, number>>> = {
   2: { east: 0, west: 0 },
 }
 
+export const umaForMode: Record<Mode, number[]> = {
+  4: [15, 5, -5, -15],
+  3: [15, 0, -15],
+  2: [0, 0],
+}
+
+export const umaWindPriority: Wind[] = ['east', 'south', 'west', 'north']
+
 export const calculateChanges = (winds: Wind[], names: Record<Wind, string>, scores: Partial<Record<Wind, number>>, round: Round) =>
   winds.flatMap((wind) => {
     if (scores[wind] && round.scores[wind]) {

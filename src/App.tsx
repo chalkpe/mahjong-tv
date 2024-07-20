@@ -1,5 +1,7 @@
-import { Container, Grid } from '@mui/material'
+import { Container, Grid, Stack } from '@mui/material'
+
 import Table from './components/table'
+import UmaTable from './components/table/UmaTable'
 import Tabs from './components/tabs'
 
 function App() {
@@ -10,7 +12,10 @@ function App() {
           <Table />
         </Grid>
         <Grid item xs={4}>
-          <Tabs />
+          <Stack spacing={2}>
+            <UmaTable />
+            <Tabs />
+          </Stack>
         </Grid>
       </Grid>
     </Container>

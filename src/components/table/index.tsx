@@ -4,7 +4,7 @@ import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@m
 import { useAtomValue } from 'jotai'
 import roundsAtom, { selectedRoundIndexAtom } from '../../store/rounds'
 
-import BaseCell from './cells/BaseCell'
+import BaseCell from './BaseCell'
 import useCells from '../../hooks/useCells'
 
 const MainTable: FC = () => {
@@ -17,13 +17,21 @@ const MainTable: FC = () => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow>{cells.flatMap((cell) => cell.names.map((name) => <BaseCell key={cell.key}>{name}</BaseCell>))}</TableRow>
+          <TableRow>
+            {cells.flatMap((cell) =>
+              cell.names.map((name) => (
+                <BaseCell key={[cell.key, name].join()} isLast={false}>
+                  {name}
+                </BaseCell>
+              ))
+            )}
+          </TableRow>
         </TableHead>
         <TableBody>
           {rounds.map((round, index) => (
             <TableRow key={round.time} selected={selectedRoundIndex === index}>
               {cells.map(({ key, component: Cell }) => (
-                <Cell key={key} round={round} index={index} />
+                <Cell key={key} round={round} index={index} isLast={index === rounds.length - 1} />
               ))}
             </TableRow>
           ))}
