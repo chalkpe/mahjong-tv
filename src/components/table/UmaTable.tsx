@@ -26,8 +26,8 @@ const UmaTable: FC = () => {
           <TableRow>
             {windsForMode[mode].map((wind) => (
               <BaseCell key={wind} isLast>
-                {uma[wind]?.score.toFixed(1) ?? '-'}
-                {uma[wind]?.index !== undefined && ` (${uma[wind]?.index + 1}위)`}
+                {uma[wind]?.score.toLocaleString('ko-KR', { signDisplay: 'always', minimumFractionDigits: 1 }) ?? '-'}
+                {uma[wind]?.index !== undefined && ` (${uma[wind]?.index + 1})`}
               </BaseCell>
             ))}
           </TableRow>

@@ -11,7 +11,7 @@ const ScoreCell: FC<BaseCellProps> = ({ round, isLast }) => {
     <>
       {windsForMode[mode].map((wind) => (
         <BaseCell key={wind} isLast={isLast}>
-          {round.scores[wind]}
+          {round.scores[wind]?.toLocaleString('ko-KR') ?? '-'}
         </BaseCell>
       ))}
     </>

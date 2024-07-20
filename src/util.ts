@@ -36,11 +36,16 @@ export const umaForMode: Record<Mode, number[]> = {
 
 export const umaWindPriority: Wind[] = ['east', 'south', 'west', 'north']
 
-export const calculateChanges = (winds: Wind[], names: Record<Wind, string>, scores: Partial<Record<Wind, number>>, round: Round) =>
+export const calculateChanges = (
+  winds: Wind[],
+  names: Record<Wind, string>,
+  scores: Partial<Record<Wind, number>>,
+  round: Round
+) =>
   winds.flatMap((wind) => {
     if (scores[wind] && round.scores[wind]) {
       const diff = scores[wind] - round.scores[wind]
-      return diff !== 0 ? [`${names[wind]} ${diff > 0 ? '+' : ''}${diff}점`] : []
+      return diff !== 0 ? [`${names[wind]} ${diff.toLocaleString('ko-KR', { signDisplay: 'always' })}점`] : []
     }
     return []
   })
