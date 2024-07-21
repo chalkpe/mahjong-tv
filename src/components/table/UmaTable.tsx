@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material'
 import { useAtomValue } from 'jotai'
+import { formatUma } from '../../formator'
 import useUma from '../../hooks/useUma'
 import settingsAtom from '../../store/settings'
 import { windsForMode } from '../../util'
@@ -26,8 +27,9 @@ const UmaTable: FC = () => {
           <TableRow>
             {windsForMode[mode].map((wind) => (
               <BaseCell key={wind} isLast>
-                {uma[wind]?.score.toLocaleString('ko-KR', { signDisplay: 'always', minimumFractionDigits: 1 }) ?? '-'}
-                {uma[wind]?.index !== undefined && ` (${uma[wind]?.index + 1})`}
+                {uma[wind]
+                  ? `${formatUma(uma[wind].score)} (${uma[wind].index + 1})`
+                  : '-'}
               </BaseCell>
             ))}
           </TableRow>

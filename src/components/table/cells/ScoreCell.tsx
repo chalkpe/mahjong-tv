@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { useAtomValue } from 'jotai'
+import { formatScore } from '../../../formator'
 import settingsAtom from '../../../store/settings'
 import { windsForMode } from '../../../util'
 import BaseCell from '../BaseCell'
@@ -11,7 +12,7 @@ const ScoreCell: FC<BaseCellProps> = ({ round, isLast }) => {
     <>
       {windsForMode[mode].map((wind) => (
         <BaseCell key={wind} isLast={isLast}>
-          {round.scores[wind]?.toLocaleString('ko-KR') ?? '-'}
+          {formatScore(round.scores[wind])}
         </BaseCell>
       ))}
     </>
