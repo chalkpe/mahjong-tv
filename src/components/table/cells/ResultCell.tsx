@@ -5,17 +5,13 @@ import BaseCell from '../BaseCell'
 import type { BaseCellProps } from '../../../types/cell'
 
 const ResultCell: FC<BaseCellProps> = ({ round, isLast }) => {
-  const { names } = useAtomValue(settingsAtom)
+  const { mode, names } = useAtomValue(settingsAtom)
+  const isTotalRyuukyoku = round.type === 'ryuukyoku' && (round.agari.length === mode || round.agari.length === 0)
+
   return (
     <BaseCell isLast={isLast}>
-      {round.agari.map((wind) => names[wind]).join('·')}{' '}
-      {round.type === 'ryuukyoku'
-        ? round.agari.length > 0
-          ? '텐파이'
-          : '유국'
-        : round.type === 'tsumo'
-        ? '쯔모'
-        : '론'}
+      {isTotalRyuukyoku ? '' : <>{round.agari.map((wind) => names[wind]).join('·')} </>}
+      {round.type === 'tsumo' ? '쯔모' : round.type === 'ron' ? '론' : isTotalRyuukyoku ? '유국' : '텐파이'}
     </BaseCell>
   )
 }
