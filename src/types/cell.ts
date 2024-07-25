@@ -1,4 +1,4 @@
-import type { Round } from './round'
+import type { Round } from '@/types/round'
 
 export interface BaseCellProps {
   round: Round

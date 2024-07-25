@@ -1,10 +1,14 @@
 import { FC } from 'react'
-import { Edit } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
+
+import { Edit } from '@mui/icons-material'
+
+import BaseCell from '@/components/table/BaseCell'
+
 import { useAtom } from 'jotai'
-import { selectedRoundIndexAtom } from '../../../store/rounds'
-import BaseCell from '../BaseCell'
-import type { BaseCellProps } from '../../../types/cell'
+import { selectedRoundIndexAtom } from '@/store/rounds'
+
+import type { BaseCellProps } from '@/types/cell'
 
 const SelectCell: FC<BaseCellProps> = ({ index, isLast }) => {
   const [selectedRoundIndex, setSelectedRoundIndex] = useAtom(selectedRoundIndexAtom)

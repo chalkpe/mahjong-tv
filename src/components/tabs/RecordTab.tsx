@@ -1,18 +1,21 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+
+import { formatScore } from '@/formator'
+import { baNames, calculateChanges, scoresForMode, sumScores, windsForMode } from '@/util'
+
 import { useAtom, useAtomValue } from 'jotai'
-import { formatScore } from '../../formator'
 import roundsAtom, {
   isEditModeAtom,
   lastRoundAtom,
   preSelectedRoundAtom,
   selectedRoundAtom,
   selectedRoundIndexAtom,
-} from '../../store/rounds'
-import settingsAtom from '../../store/settings'
-import { AgariType, agariTypeOptions } from '../../types/agari'
-import { Wind } from '../../types/wind'
-import { scoresForMode, baNames, windsForMode, calculateChanges, sumScores } from '../../util'
+} from '@/store/rounds'
+import settingsAtom from '@/store/settings'
+
+import { AgariType, agariTypeOptions } from '@/types/agari'
+import type { Wind } from '@/types/wind'
 
 const RecordTab: FC = () => {
   const { mode, names } = useAtomValue(settingsAtom)

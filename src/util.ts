@@ -1,6 +1,6 @@
-import type { Mode } from './types/mode'
-import type { Round } from './types/round'
-import type { Wind } from './types/wind'
+import type { Mode } from '@/types/mode'
+import type { Round } from '@/types/round'
+import type { Wind } from '@/types/wind'
 
 export const baNames: Record<Wind, string> = {
   east: '동',

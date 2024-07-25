@@ -1,7 +1,8 @@
 import { Container, Grid, Stack } from '@mui/material'
-import Table from './components/table'
-import UmaTable from './components/table/UmaTable'
-import Tabs from './components/tabs'
+
+import Table from '@/components/table'
+import UmaTable from '@/components/table/UmaTable'
+import Tabs from '@/components/tabs'
 
 function App() {
   return (

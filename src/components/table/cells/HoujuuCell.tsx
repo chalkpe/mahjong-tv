@@ -1,8 +1,11 @@
 import { FC } from 'react'
+
+import BaseCell from '@/components/table/BaseCell'
+
 import { useAtomValue } from 'jotai'
-import settingsAtom from '../../../store/settings'
-import BaseCell from '../BaseCell'
-import type { BaseCellProps } from '../../../types/cell'
+import settingsAtom from '@/store/settings'
+
+import type { BaseCellProps } from '@/types/cell'
 
 const HoujuuCell: FC<BaseCellProps> = ({ round, isLast }) => {
   const { names } = useAtomValue(settingsAtom)

@@ -1,8 +1,10 @@
+import { scoresForMode, umaForMode, umaWindPriority } from '@/util'
+
 import { useAtomValue } from 'jotai'
-import { lastRoundAtom } from '../store/rounds'
-import settingsAtom from '../store/settings'
-import { scoresForMode, umaForMode, umaWindPriority } from '../util'
-import type { Wind } from '../types/wind'
+import { lastRoundAtom } from '@/store/rounds'
+import settingsAtom from '@/store/settings'
+
+import type { Wind } from '@/types/wind'
 
 
 const useUma = () => {

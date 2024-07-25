@@ -1,10 +1,13 @@
 import { FC } from 'react'
+
+import BaseCell from '@/components/table/BaseCell'
+import { formatScore } from '@/formator'
+import { windsForMode } from '@/util'
+
 import { useAtomValue } from 'jotai'
-import { formatScore } from '../../../formator'
-import settingsAtom from '../../../store/settings'
-import { windsForMode } from '../../../util'
-import BaseCell from '../BaseCell'
-import type { BaseCellProps } from '../../../types/cell'
+import settingsAtom from '@/store/settings'
+
+import type { BaseCellProps } from '@/types/cell'
 
 const ScoreCell: FC<BaseCellProps> = ({ round, isLast }) => {
   const { mode } = useAtomValue(settingsAtom)

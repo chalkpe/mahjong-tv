@@ -1,6 +1,6 @@
-import type { Mode } from './mode'
-import type { Tab } from './tab'
-import type { Wind } from './wind'
+import type { Mode } from '@/types/mode'
+import type { Tab } from '@/types/tab'
+import type { Wind } from '@/types/wind'
 
 export type Settings = {
   tab: Tab

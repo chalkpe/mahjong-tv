@@ -1,10 +1,13 @@
 import { FC, useState } from 'react'
 import { Button, ButtonGroup, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material'
+
+import { seatNames, windsForMode } from '@/util'
+
 import { useAtom } from 'jotai'
-import settingsAtom from '../../store/settings'
-import { modeOptions } from '../../types/mode'
-import { Wind } from '../../types/wind'
-import { seatNames, windsForMode } from '../../util'
+import settingsAtom from '@/store/settings'
+
+import { modeOptions } from '@/types/mode'
+import { Wind } from '@/types/wind'
 
 const SettingsTab: FC = () => {
   const [settings, setSettings] = useAtom(settingsAtom)

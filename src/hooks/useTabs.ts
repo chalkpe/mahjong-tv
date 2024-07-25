@@ -1,11 +1,14 @@
 import { useCallback, useMemo } from 'react'
+
+import HistoryTab from '@/components/tabs/HistoryTab'
+import RecordTab from '@/components/tabs/RecordTab'
+import SettingsTab from '@/components/tabs/SettingsTab'
+
 import { useAtom, useAtomValue } from 'jotai'
-import HistoryTab from '../components/tabs/HistoryTab'
-import RecordTab from '../components/tabs/RecordTab'
-import SettingsTab from '../components/tabs/SettingsTab'
-import { isEditModeAtom } from '../store/rounds'
-import settingsAtom from '../store/settings'
-import { Tab, tabOptions } from '../types/tab'
+import { isEditModeAtom } from '@/store/rounds'
+import settingsAtom from '@/store/settings'
+
+import { Tab, tabOptions } from '@/types/tab'
 
 const components = {
   settings: SettingsTab,

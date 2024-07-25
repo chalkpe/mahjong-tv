@@ -1,6 +1,6 @@
-import { AgariType } from './agari'
-import { Mode } from './mode'
-import { Wind } from './wind'
+import { AgariType } from '@/types/agari'
+import { Mode } from '@/types/mode'
+import { Wind } from '@/types/wind'
 
 export interface Round {
   time: number

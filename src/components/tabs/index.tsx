@@ -1,7 +1,8 @@
 import { FC } from 'react'
-import { TabContext, TabList, TabPanel } from '@mui/lab'
 import { Paper, Tab } from '@mui/material'
-import useTabs from '../../hooks/useTabs'
+import { TabContext, TabList, TabPanel } from '@mui/lab'
+
+import useTabs from '@/hooks/useTabs'
 
 const Tabs: FC = () => {
   const { value, onChange, color, tabs } = useTabs()

@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import type { Round } from '../types/round'
+
+import type { Round } from '@/types/round'
 
 const roundsAtom = atomWithStorage<Round[]>('rounds', [])
 

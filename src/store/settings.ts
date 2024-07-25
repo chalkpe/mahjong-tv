@@ -1,6 +1,8 @@
+import { seatNames } from '@/util'
+
 import { atomWithStorage } from 'jotai/utils'
-import { seatNames } from '../util'
-import type { Settings } from '../types/settings'
+
+import type { Settings } from '@/types/settings'
 
 const settingsAtom = atomWithStorage<Settings>('settings', {
   tab: 'settings',
