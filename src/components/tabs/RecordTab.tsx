@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, Typography } from '@mui/material'
 
+import NumberField from '@/components/tabs/NumberField'
 import { formatScore } from '@/formator'
 import { baNames, calculateChanges, scoresForMode, sumScores, windsForMode } from '@/util'
 
@@ -150,7 +151,7 @@ const RecordTab: FC = () => {
   }, [isEditMode, selectedRoundIndex, setRounds, setSelectedRoundIndex])
 
   return (
-    <Stack direction="column" spacing={2}>
+    <Stack direction="column" spacing={2} sx={{ flex: 1 }}>
       <section>
         <Typography variant="h6" gutterBottom>
           회차
@@ -172,25 +173,30 @@ const RecordTab: FC = () => {
               </MenuItem>
             ))}
           </Select>
-          <TextField
+
+          <Select
             color={color}
-            type="number"
-            label="국"
             fullWidth
-            value={kyoku.toString()}
+            value={kyoku}
             onChange={(event) => {
               setKyoku(Number(event.target.value))
               setHonba(0)
             }}
-          />
-          <TextField
-            color={color}
-            type="number"
-            label="본장"
-            fullWidth
-            value={honba.toString()}
-            onChange={(event) => setHonba(Number(event.target.value))}
-          />
+          >
+            {[...Array(mode)].map((_, index) => (
+              <MenuItem key={index + 1} value={index + 1}>
+                {index + 1}국
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Select color={color} fullWidth value={honba} onChange={(event) => setHonba(Number(event.target.value))}>
+            {[...Array(10)].map((_, index) => (
+              <MenuItem key={index} value={index}>
+                {index}본장
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
       </section>
 
@@ -200,15 +206,17 @@ const RecordTab: FC = () => {
         </Typography>
         <Stack direction="row" spacing={1} pt={1}>
           {winds.map((wind) => (
-            <TextField
+            <NumberField
               key={wind}
+              id={wind}
               color={color}
               type="number"
               margin="normal"
               label={names[wind]}
               fullWidth
-              value={scores[wind]?.toString() ?? ''}
-              onChange={(event) => setScores({ ...scores, [wind]: Number(event.target.value) })}
+              value={scores[wind]}
+              onChange={(value) => setScores({ ...scores, [wind]: value })}
+              onFocus={() => setScores({ ...scores, [wind]: undefined })}
             />
           ))}
         </Stack>
@@ -276,7 +284,7 @@ const RecordTab: FC = () => {
         </section>
       )}
 
-      <Divider />
+      <Divider sx={{ flex: 1 }} />
 
       {scoreChanges.length > 0 && (
         <Box>
