@@ -3,6 +3,7 @@ import { seatNames } from '../util'
 import type { Settings } from '../types/settings'
 
 const settingsAtom = atomWithStorage<Settings>('settings', {
+  tab: 'settings',
   mode: 4,
   names: seatNames,
 })

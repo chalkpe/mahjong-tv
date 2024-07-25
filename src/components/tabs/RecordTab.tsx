@@ -1,11 +1,18 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import { useAtom, useAtomValue } from 'jotai'
-import roundsAtom, { lastRoundAtom, selectedRoundIndexAtom } from '../../store/rounds'
+import { formatScore } from '../../formator'
+import roundsAtom, {
+  isEditModeAtom,
+  lastRoundAtom,
+  preSelectedRoundAtom,
+  selectedRoundAtom,
+  selectedRoundIndexAtom,
+} from '../../store/rounds'
 import settingsAtom from '../../store/settings'
 import { AgariType, agariTypeOptions } from '../../types/agari'
 import { Wind } from '../../types/wind'
-import { scoresForMode, baNames, windsForMode, calculateChanges } from '../../util'
+import { scoresForMode, baNames, windsForMode, calculateChanges, sumScores } from '../../util'
 
 const RecordTab: FC = () => {
   const { mode, names } = useAtomValue(settingsAtom)
@@ -13,17 +20,13 @@ const RecordTab: FC = () => {
 
   const [rounds, setRounds] = useAtom(roundsAtom)
   const [selectedRoundIndex, setSelectedRoundIndex] = useAtom(selectedRoundIndexAtom)
-  const color = useMemo(() => (selectedRoundIndex !== undefined ? 'secondary' : 'primary'), [selectedRoundIndex])
+
+  const isEditMode = useAtomValue(isEditModeAtom)
+  const color = useMemo(() => (isEditMode ? 'secondary' : 'primary'), [isEditMode])
 
   const lastRound = useAtomValue(lastRoundAtom)
-  const selectedRound = useMemo(
-    () => (selectedRoundIndex !== undefined ? rounds[selectedRoundIndex] : undefined),
-    [rounds, selectedRoundIndex]
-  )
-  const preSelectedRound = useMemo(
-    () => (selectedRoundIndex !== undefined && selectedRoundIndex > 0 ? rounds[selectedRoundIndex - 1] : undefined),
-    [rounds, selectedRoundIndex]
-  )
+  const selectedRound = useAtomValue(selectedRoundAtom)
+  const preSelectedRound = useAtomValue(preSelectedRoundAtom)
 
   const [ba, setBa] = useState<Wind>(lastRound?.ba ?? 'east')
   const [kyoku, setKyoku] = useState<number>(lastRound?.kyoku ?? 1)
@@ -53,11 +56,9 @@ const RecordTab: FC = () => {
     }
   }, [lastRound, mode, selectedRound])
 
-  const isBaKyuokuHonbaValid = useMemo(
-    () => ({
-      valid: kyoku >= 1 && honba >= 0,
-      duplicate: !rounds.some((r) => r.ba === ba && r.kyoku === kyoku && r.honba === honba),
-    }),
+  const isHonbaValid = useMemo(() => kyoku >= 1 && honba >= 0, [honba, kyoku])
+  const isHonbaUnique = useMemo(
+    () => !rounds.some((r) => r.ba === ba && r.kyoku === kyoku && r.honba === honba),
     [ba, honba, kyoku, rounds]
   )
 
@@ -74,21 +75,24 @@ const RecordTab: FC = () => {
     }
   }, [agari.length, houjuu, type])
 
+  const maxScore = useMemo(() => (mode === 2 ? Infinity : sumScores(scoresForMode[mode])), [mode])
+  const isScoreValid = useMemo(() => sumScores(scores) <= maxScore, [maxScore, scores])
+
   const isValid = useMemo(
-    () => isBaKyuokuHonbaValid.valid && isSelectValid,
-    [isBaKyuokuHonbaValid.valid, isSelectValid]
+    () => isHonbaValid && isSelectValid && isScoreValid,
+    [isHonbaValid, isScoreValid, isSelectValid]
   )
 
   const scoreChanges = useMemo(
     () =>
-      selectedRoundIndex !== undefined
+      isEditMode
         ? preSelectedRound
           ? calculateChanges(winds, names, scores, preSelectedRound)
           : []
         : lastRound
         ? calculateChanges(winds, names, scores, lastRound)
         : [],
-    [lastRound, names, preSelectedRound, scores, selectedRoundIndex, winds]
+    [isEditMode, lastRound, names, preSelectedRound, scores, winds]
   )
 
   const record = useCallback(() => {
@@ -102,7 +106,7 @@ const RecordTab: FC = () => {
   }, [agari, ba, honba, houjuu, kyoku, mode, scores, setRounds, type])
 
   const edit = useCallback(() => {
-    if (selectedRoundIndex !== undefined) {
+    if (isEditMode) {
       // edit round
       setRounds((rounds) =>
         rounds.map((r, index) =>
@@ -115,10 +119,23 @@ const RecordTab: FC = () => {
       setType('tsumo')
       setAgari([])
     }
-  }, [agari, ba, honba, houjuu, kyoku, mode, scores, selectedRoundIndex, setRounds, setSelectedRoundIndex, type])
+  }, [
+    agari,
+    ba,
+    honba,
+    houjuu,
+    isEditMode,
+    kyoku,
+    mode,
+    scores,
+    selectedRoundIndex,
+    setRounds,
+    setSelectedRoundIndex,
+    type,
+  ])
 
   const deleteRound = useCallback(() => {
-    if (selectedRoundIndex !== undefined) {
+    if (isEditMode) {
       // delete round
       setRounds((rounds) => rounds.filter((_, index) => index !== selectedRoundIndex))
 
@@ -127,7 +144,7 @@ const RecordTab: FC = () => {
       setType('tsumo')
       setAgari([])
     }
-  }, [selectedRoundIndex, setRounds, setSelectedRoundIndex])
+  }, [isEditMode, selectedRoundIndex, setRounds, setSelectedRoundIndex])
 
   return (
     <Stack direction="column" spacing={2}>
@@ -267,13 +284,15 @@ const RecordTab: FC = () => {
         </Box>
       )}
 
-      {isSelectValid && !isBaKyuokuHonbaValid.valid && <Alert severity="error">회차가 올바르지 않습니다.</Alert>}
-      {selectedRoundIndex === undefined && isSelectValid && !isBaKyuokuHonbaValid.duplicate && (
-        <Alert severity="error">
+      {!isHonbaValid && <Alert severity="error">회차가 올바르지 않습니다.</Alert>}
+      {!isEditMode && !isHonbaUnique && (
+        <Alert severity="warning">
           {baNames[ba]}
           {kyoku}국 {honba}본장은 이미 기록되어 있습니다.
         </Alert>
       )}
+
+      {!isScoreValid && <Alert severity="error">점수의 총합은 {formatScore(maxScore)}점을 넘을 수 없습니다.</Alert>}
 
       <Button
         size="large"
@@ -281,12 +300,12 @@ const RecordTab: FC = () => {
         color={color}
         variant="contained"
         disabled={!isValid}
-        onClick={selectedRoundIndex !== undefined ? edit : record}
+        onClick={isEditMode ? edit : record}
       >
-        {selectedRoundIndex !== undefined ? '수정' : '생성'}
+        {isEditMode ? '수정' : '생성'}
       </Button>
 
-      {selectedRoundIndex !== undefined && (
+      {isEditMode && (
         <Button size="large" fullWidth color="error" variant="contained" onClick={deleteRound}>
           삭제
         </Button>

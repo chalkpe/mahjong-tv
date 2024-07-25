@@ -1,34 +1,24 @@
-import { FC, useMemo, useState } from 'react'
+import { FC } from 'react'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import { Paper, Tab } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { selectedRoundIndexAtom } from '../../store/rounds'
-import RecordTab from './RecordTab'
-import SettingsTab from './SettingsTab'
+import useTabs from '../../hooks/useTabs'
 
 const Tabs: FC = () => {
-  const [tab, setTab] = useState('settings')
-  const selectedRoundIndex = useAtomValue(selectedRoundIndexAtom)
-  const color = useMemo(
-    () => (selectedRoundIndex !== undefined && tab === 'record' ? 'secondary' : 'primary'),
-    [selectedRoundIndex, tab]
-  )
+  const { value, onChange, color, tabs } = useTabs()
 
   return (
     <Paper sx={{ height: '100%' }}>
-      <TabContext value={tab}>
-        <TabList variant="fullWidth" textColor={color} indicatorColor={color} onChange={(_, v) => setTab(v)}>
-          <Tab label="설정" value="settings" />
-          <Tab label={selectedRoundIndex !== undefined ? '수정' : '기록'} value="record" />
-          <Tab label="역사" value="history" />
+      <TabContext value={value}>
+        <TabList variant="fullWidth" textColor={color} indicatorColor={color} onChange={onChange}>
+          {tabs.map((tab) => (
+            <Tab key={tab.value} label={tab.label} value={tab.value} />
+          ))}
         </TabList>
-        <TabPanel value="settings">
-          <SettingsTab />
-        </TabPanel>
-        <TabPanel value="record">
-          <RecordTab />
-        </TabPanel>
-        <TabPanel value="history">Item Three</TabPanel>
+        {tabs.map(({ component: Component, value }) => (
+          <TabPanel key={value} value={value}>
+            <Component />
+          </TabPanel>
+        ))}
       </TabContext>
     </Paper>
   )

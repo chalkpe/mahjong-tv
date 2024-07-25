@@ -28,6 +28,8 @@ export const scoresForMode: Record<Mode, Partial<Record<Wind, number>>> = {
   2: { east: 0, west: 0 },
 }
 
+export const sumScores = (scores: Partial<Record<Wind, number>>) => Object.values(scores).reduce((a, b) => a + b)
+
 export const umaForMode: Record<Mode, number[]> = {
   4: [15, 5, -5, -15],
   3: [15, 0, -15],
