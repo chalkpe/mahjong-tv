@@ -30,7 +30,7 @@ const useCells = (): Cell[] => {
       { key: 'score', component: ScoreCell, names: windsForMode[mode].map((wind) => names[wind]) },
       { key: 'result', component: ResultCell, names: ['결과'] },
       { key: 'houjuu', component: HoujuuCell, names: ['방총'] },
-      { key: 'select', component: SelectCell, names: ['편집'] },
+      { key: 'select', component: SelectCell, names: ['수정'] },
     ],
     [mode, names]
   )

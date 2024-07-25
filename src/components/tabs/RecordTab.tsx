@@ -305,6 +305,12 @@ const RecordTab: FC = () => {
 
       {!isScoreValid && <Alert severity="error">점수의 총합은 {formatScore(maxScore)}점을 넘을 수 없습니다.</Alert>}
 
+      {isEditMode && (
+        <Button size="large" fullWidth color="error" variant="contained" onClick={deleteRound}>
+          삭제
+        </Button>
+      )}
+
       <Button
         size="large"
         fullWidth
@@ -315,12 +321,6 @@ const RecordTab: FC = () => {
       >
         {isEditMode ? '수정' : '생성'}
       </Button>
-
-      {isEditMode && (
-        <Button size="large" fullWidth color="error" variant="contained" onClick={deleteRound}>
-          삭제
-        </Button>
-      )}
     </Stack>
   )
 }
