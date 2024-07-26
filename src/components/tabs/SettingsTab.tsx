@@ -4,6 +4,8 @@ import { Button, ButtonGroup, Dialog, DialogContent, DialogTitle, Stack, TextFie
 import { seatNames, windsForMode } from '@/util'
 
 import { useAtom } from 'jotai'
+import historiesAtom from '@/store/history'
+import roundsAtom from '@/store/rounds'
 import settingsAtom from '@/store/settings'
 
 import { modeOptions } from '@/types/mode'
@@ -11,6 +13,8 @@ import { Wind } from '@/types/wind'
 
 const SettingsTab: FC = () => {
   const [settings, setSettings] = useAtom(settingsAtom)
+  const [rounds, setRounds] = useAtom(roundsAtom)
+  const [histories, setHistories] = useAtom(historiesAtom)
   const [editingWind, setEditingWind] = useState<Wind>()
 
   return (
@@ -54,10 +58,41 @@ const SettingsTab: FC = () => {
                 onChange={(event) =>
                   setSettings({ ...settings, names: { ...settings.names, [editingWind]: event.target.value } })
                 }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    setEditingWind(undefined)
+                  }
+                }}
               />
             </DialogContent>
           </Dialog>
         )}
+      </section>
+      <section>
+        <Typography variant="h6" gutterBottom>
+          리셋
+        </Typography>
+        <Stack direction="column" spacing={2}>
+          <Button
+            size="large"
+            variant="contained"
+            fullWidth
+            disabled={rounds.length === 0}
+            onClick={() => setRounds([])}
+          >
+            기록 지우기
+          </Button>
+          <Button
+            size="large"
+            variant="contained"
+            fullWidth
+            disabled={histories.length === 0}
+            onClick={() => setHistories([])}
+          >
+            역사 지우기
+          </Button>
+        </Stack>
       </section>
     </Stack>
   )

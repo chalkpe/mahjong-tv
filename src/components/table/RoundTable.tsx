@@ -1,7 +1,8 @@
 import { FC, useState } from 'react'
 import { Paper, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material'
 
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
+
 import useCells from '@/hooks/useCells'
 
 import { useAtomValue } from 'jotai'
@@ -9,7 +10,7 @@ import roundsAtom, { selectedRoundIndexAtom } from '@/store/rounds'
 
 const ROWS_PER_PAGE = 12
 
-const MainTable: FC = () => {
+const RoundTable: FC = () => {
   const cells = useCells()
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
@@ -58,4 +59,4 @@ const MainTable: FC = () => {
   )
 }
 
-export default MainTable
+export default RoundTable

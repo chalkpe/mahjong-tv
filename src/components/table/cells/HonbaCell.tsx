@@ -1,6 +1,7 @@
 import { FC } from 'react'
 
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
+
 import { baNames } from '@/util'
 
 import type { BaseCellProps } from '@/types/cell'

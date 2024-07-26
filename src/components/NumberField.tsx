@@ -25,6 +25,9 @@ const NumberField: FC<NumberFieldProps> = ({ value, onChange, ...rest }) => {
         setOnFocus(false)
         if (editingValue !== '') onChange(Number(editingValue))
       }}
+      inputProps={{
+        onKeyDown: (e) => e.key === 'Enter' && e.currentTarget.blur(),
+      }}
     />
   )
 }

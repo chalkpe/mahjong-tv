@@ -10,7 +10,7 @@
 
     /* Path mapping */
     "baseUrl": "./src",
-    "paths": { "@/*": ["*"] },
+    "paths": { "@/*": ["*"], "~/*": ["components/*"] },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material'
 
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
+
 import { formatUma } from '@/formator'
 import useUma from '@/hooks/useUma'
 import { windsForMode } from '@/util'

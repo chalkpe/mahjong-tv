@@ -1,7 +1,9 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { InfoOutlined } from '@mui/icons-material'
 import { Alert, Box, Button, ButtonGroup, Divider, MenuItem, Select, Stack, Typography } from '@mui/material'
 
-import NumberField from '@/components/tabs/NumberField'
+import NumberField from '~/NumberField'
+
 import { formatScore } from '@/formator'
 import { baNames, calculateChanges, scoresForMode, sumScores, windsForMode } from '@/util'
 
@@ -91,12 +93,12 @@ const RecordTab: FC = () => {
     () =>
       isEditMode
         ? preSelectedRound
-          ? calculateChanges(winds, names, scores, preSelectedRound)
-          : []
+          ? calculateChanges(winds, names, scores, preSelectedRound.scores)
+          : calculateChanges(winds, names, scores, scoresForMode[mode])
         : lastRound
-        ? calculateChanges(winds, names, scores, lastRound)
-        : [],
-    [isEditMode, lastRound, names, preSelectedRound, scores, winds]
+        ? calculateChanges(winds, names, scores, lastRound.scores)
+        : calculateChanges(winds, names, scores, scoresForMode[mode]),
+    [isEditMode, lastRound, mode, names, preSelectedRound, scores, winds]
   )
 
   const record = useCallback(() => {
@@ -202,7 +204,10 @@ const RecordTab: FC = () => {
 
       <section>
         <Typography variant="h6" gutterBottom>
-          점수
+          <Stack direction="row" spacing={1} alignItems="center">
+            <span>점수</span>
+            <InfoOutlined />
+          </Stack>
         </Typography>
         <Stack direction="row" spacing={1} pt={1}>
           {winds.map((wind) => (

@@ -1,5 +1,4 @@
 import type { Mode } from '@/types/mode'
-import type { Round } from '@/types/round'
 import type { Wind } from '@/types/wind'
 
 export const baNames: Record<Wind, string> = {
@@ -38,15 +37,23 @@ export const umaForMode: Record<Mode, number[]> = {
 
 export const umaWindPriority: Wind[] = ['east', 'south', 'west', 'north']
 
+export const calculateUma = (scores: Partial<Record<Wind, number>>, mode: Mode) =>
+  Object.fromEntries(
+    Object.entries(scores)
+      .map(([wind, score]) => [wind, (score - (scoresForMode[mode][wind as Wind] ?? 0)) / 1000] as [Wind, number])
+      .sort((a, b) => b[1] - a[1] || umaWindPriority.indexOf(a[0]) - umaWindPriority.indexOf(b[0]))
+      .map(([wind, score], index) => [wind, { score: score + umaForMode[mode][index], index }] as const)
+  )
+
 export const calculateChanges = (
   winds: Wind[],
   names: Record<Wind, string>,
   scores: Partial<Record<Wind, number>>,
-  round: Round
+  previousScores: Partial<Record<Wind, number>>
 ) =>
   winds.flatMap((wind) => {
-    if (scores[wind] && round.scores[wind]) {
-      const diff = scores[wind] - round.scores[wind]
+    if (scores[wind] && previousScores[wind]) {
+      const diff = scores[wind] - previousScores[wind]
       return diff !== 0 ? [`${names[wind]} ${diff.toLocaleString('ko-KR', { signDisplay: 'always' })}점`] : []
     }
     return []

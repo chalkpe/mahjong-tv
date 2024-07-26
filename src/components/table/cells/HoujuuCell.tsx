@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
 
 import { useAtomValue } from 'jotai'
 import settingsAtom from '@/store/settings'

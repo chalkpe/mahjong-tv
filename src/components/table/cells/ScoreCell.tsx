@@ -1,6 +1,7 @@
 import { FC } from 'react'
 
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
+
 import { formatScore } from '@/formator'
 import { windsForMode } from '@/util'
 

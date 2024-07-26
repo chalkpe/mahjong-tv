@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { Paper, Tab } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
+import { Paper, Tab } from '@mui/material'
 
 import useTabs from '@/hooks/useTabs'
 

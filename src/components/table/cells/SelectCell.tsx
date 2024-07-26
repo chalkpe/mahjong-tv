@@ -1,9 +1,8 @@
 import { FC } from 'react'
+import { Edit } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
 
-import { Edit } from '@mui/icons-material'
-
-import BaseCell from '@/components/table/BaseCell'
+import BaseCell from '~/table/BaseCell'
 
 import { useAtom } from 'jotai'
 import { selectedRoundIndexAtom } from '@/store/rounds'

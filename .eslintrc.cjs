@@ -1,7 +1,7 @@
 const groups = [
   ['^\\u0000'],
-  ['^react', '^@mui/material', '^@mui/lab'],
-  ['^'],
+  ['^react', '^@mui'],
+  ['^~/\\w', '^'],
   ['^@/\\w'],
   ['^jotai', '^@/store/\\w'],
   ['^@/types/', '\\u0000$'],

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 
-import HistoryTab from '@/components/tabs/HistoryTab'
-import RecordTab from '@/components/tabs/RecordTab'
-import SettingsTab from '@/components/tabs/SettingsTab'
+import HistoryTab from '~/tabs/HistoryTab'
+import RecordTab from '~/tabs/RecordTab'
+import SettingsTab from '~/tabs/SettingsTab'
 
 import { useAtom, useAtomValue } from 'jotai'
 import { isEditModeAtom } from '@/store/rounds'
